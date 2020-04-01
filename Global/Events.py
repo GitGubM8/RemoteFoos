@@ -1,19 +1,25 @@
-class ISubscriber:
+class Event_IReadOnly:
     def Subscribe(self, callback) -> None:
         pass
 
     def Unsubscribe(self, callback) -> None:
         pass
-
-class IPublisher:
+class Event_IWriteOnly:
     def Publish(self) -> None:
         pass
-class IParamedPublisher:
+class Event_IReadWrite(Event_IReadOnly, Event_IWriteOnly):
+    pass
+
+class ParamedEvent_IReadOnly(Event_IReadOnly):
+    pass
+class ParamedEvent_IWriteOnly:
     def Publish(self, value) -> None:
         pass
+class ParamedEvent_IReadWrite(ParamedEvent_IReadOnly, ParamedEvent_IWriteOnly):
+    pass
 
 
-class Event(ISubscriber, IPublisher):
+class Event(Event_IReadWrite):
     _listeners = set()
     _isExecuting = False
 
@@ -35,7 +41,7 @@ class Event(ISubscriber, IPublisher):
                 self._isExecuting = False
                 raise
         self._isExecuting = False
-class ParamedEvent(ISubscriber, IParamedPublisher):
+class ParamedEvent(ParamedEvent_IReadWrite):
     _listeners = set()
     _isExecuting = False
 

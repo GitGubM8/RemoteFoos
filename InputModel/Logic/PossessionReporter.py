@@ -5,18 +5,20 @@ class PossessionReporter_IReadOnly:
     def HasPossession(self) -> bool:
         pass
     @property
-    def PossessionGainedEvent(self) -> ISubscriber:
+    def PossessionGainedEvent(self) -> Event_IReadOnly:
         pass
     @property
-    def PossessionLostEvent(self) -> ISubscriber:
+    def PossessionLostEvent(self) -> Event_IReadOnly:
         pass
 class PossessionReporter_IWriteOnly:
     def GrantPossession(self) -> None:
         pass
     def RemovePossession(self) -> None:
         pass
+class PossessionReporter_IReadWrite(PossessionReporter_IReadOnly, PossessionReporter_IWriteOnly):
+    pass
 
-class PossessionReporter(PossessionReporter_IReadOnly, PossessionReporter_IWriteOnly):
+class PossessionReporter(PossessionReporter_IReadWrite):
     _hasPossession = False
     @property
     def HasPossession(self):
@@ -24,7 +26,7 @@ class PossessionReporter(PossessionReporter_IReadOnly, PossessionReporter_IWrite
 
     _possessionGainedTrigger = Event()
     @property
-    def PossessionGainedEvent(self) -> ISubscriber:
+    def PossessionGainedEvent(self) -> Event_IReadOnly:
         return self._possessionGainedTrigger
     def GrantPossession(self) -> None:
         if (self._hasPossession):
@@ -34,7 +36,7 @@ class PossessionReporter(PossessionReporter_IReadOnly, PossessionReporter_IWrite
 
     _possessionLostTrigger = Event()
     @property
-    def PossessionLostEvent(self) -> ISubscriber:
+    def PossessionLostEvent(self) -> Event_IReadOnly:
         return self._possessionLostTrigger
     def RemovePossession(self) -> None:
         if (self._hasPossession == False):
