@@ -17,12 +17,10 @@ class RoleReporter_IReadWrite(RoleReporter_IReadOnly, RoleReporter_IWriteOnly):
 	pass
 
 class RoleReporter(GarbageCollectableObject, RoleReporter_IReadWrite):
-	_currentRole = None
 	@property
 	def CurrentRole(self) -> Role:
 		return self._currentRole
 
-	_roleChangedTrigger = ParamedEvent()
 	@property
 	def RoleChangedEvent(self) -> ParamedEvent_IReadOnly:
 		return self._roleChangedTrigger
@@ -35,11 +33,13 @@ class RoleReporter(GarbageCollectableObject, RoleReporter_IReadWrite):
 		self._roleChangedTrigger.Publish(ValueChanged(oldRole, self._currentRole))
 
 	def __init__(self, role: Role):
+		super().__init__()
 		self._currentRole = role
+		self._roleChangedTrigger = ParamedEvent()
 
 	def _WipeDispatchers(self):
 		del self._roleChangedTrigger
-		super(RoleReporter, self)._WipeDispatchers()
+		super()._WipeDispatchers()
 	def _DisposeChildren(self):
 		self._currentRole = None
-		super(RoleReporter, self)._DisposeChildren()
+		super()._DisposeChildren()

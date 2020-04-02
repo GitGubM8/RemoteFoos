@@ -3,23 +3,19 @@ import unittest
 from Global.Events import *
 
 class EventTest(unittest.TestCase):
-	_fakeEvent = None
-	_fakeParamedEvent = None
-
 	def setUp(self) -> None:
 		self._fakeEvent = Event()
 		self._fakeParamedEvent = ParamedEvent()
 
 	def tearDown(self) -> None:
-		self._fakeEvent = None
-		self._fakeParamedEvent = None
+		del self._fakeEvent
+		del self._fakeParamedEvent
 
 	def test_ParamlessEvent_Publish_ListenersAreCalled(self) -> None:
 		callbackCount = 0
 		def StubCallback():
 			nonlocal callbackCount
 			callbackCount += 1
-
 		self._fakeEvent.Subscribe(StubCallback)
 
 		self.assertEqual(0, callbackCount)
@@ -30,11 +26,9 @@ class EventTest(unittest.TestCase):
 
 	def test_ParamedEvent_Publish_ParamedListenersAreCalled(self) -> None:
 		callbackValue = None
-
 		def StubCallback(value):
 			nonlocal callbackValue
 			callbackValue = value
-
 		self._fakeParamedEvent.Subscribe(StubCallback)
 
 		self.assertEqual(None, callbackValue)
@@ -46,11 +40,9 @@ class EventTest(unittest.TestCase):
 
 	def test_ParamedEvent_Publish_UnparamedListenersAreCalled(self) -> None:
 		callbackCount = 0
-
 		def StubCallback():
 			nonlocal callbackCount
 			callbackCount += 1
-
 		self._fakeParamedEvent.Subscribe(StubCallback)
 
 		self.assertEqual(0, callbackCount)

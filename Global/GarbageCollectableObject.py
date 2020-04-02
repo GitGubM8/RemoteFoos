@@ -3,7 +3,6 @@ class IDisposedStatus:
 		pass
 
 class GarbageCollectableObject(IDisposedStatus):
-	_isDisposed = False
 	@property
 	def IsDisposed(self) -> bool:
 		return self._isDisposed
@@ -16,6 +15,9 @@ class GarbageCollectableObject(IDisposedStatus):
 		pass
 	def _WipeDispatchers(self):
 		pass
+
+	def __init__(self):
+		self._isDisposed = False
 
 	def __del__(self):
 		if (self._isDisposed):

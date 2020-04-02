@@ -19,12 +19,10 @@ class PossessionReporter_IReadWrite(PossessionReporter_IReadOnly, PossessionRepo
 	pass
 
 class PossessionReporter(GarbageCollectableObject, PossessionReporter_IReadWrite):
-	_hasPossession = False
 	@property
 	def HasPossession(self):
 		return self._hasPossession
 
-	_possessionGainedTrigger = Event()
 	@property
 	def PossessionGainedEvent(self) -> Event_IReadOnly:
 		return self._possessionGainedTrigger
@@ -34,7 +32,6 @@ class PossessionReporter(GarbageCollectableObject, PossessionReporter_IReadWrite
 		self._hasPossession = True
 		self._possessionGainedTrigger.Publish()
 
-	_possessionLostTrigger = Event()
 	@property
 	def PossessionLostEvent(self) -> Event_IReadOnly:
 		return self._possessionLostTrigger
@@ -44,8 +41,14 @@ class PossessionReporter(GarbageCollectableObject, PossessionReporter_IReadWrite
 		self._hasPossession = False
 		self._possessionLostTrigger.Publish()
 
+	def __init__(self):
+		super().__init__()
+		self._hasPossession = False
+		self._possessionGainedTrigger = Event()
+		self._possessionLostTrigger = Event()
+
 	def _WipeDispatchers(self):
 		del self._possessionGainedTrigger
 		del self._possessionLostTrigger
 
-		super(PossessionReporter, self)._WipeDispatchers()
+		super()._WipeDispatchers()

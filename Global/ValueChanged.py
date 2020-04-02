@@ -1,10 +1,7 @@
 class ValueChanged:
-	_from = None
 	@property
 	def From(self):
 		return self._from
-
-	_to = None
 	@property
 	def To(self):
 		return self._to
