@@ -1,6 +1,8 @@
 # Installation
 1. Python 3.6
 2. `pip install slackclient==2.5.0`
+3. Copy `Bot User OAuth Access Token` from **Slack.API OAuth & Permissions**
+4. Set environment variable `REMOTE_FOOS_TOKEN` to above value
 
 # Style
 Coming from a C# background, this project rarely follows PEP8 format
