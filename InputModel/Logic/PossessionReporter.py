@@ -1,6 +1,6 @@
 from Global.Events import *
 
-class PossessionReporter_IReadOnly:
+class PossessionReporter_IReadOnly(IDisposedStatus):
 	@property
 	def HasPossession(self) -> bool:
 		pass
@@ -18,7 +18,7 @@ class PossessionReporter_IWriteOnly:
 class PossessionReporter_IReadWrite(PossessionReporter_IReadOnly, PossessionReporter_IWriteOnly):
 	pass
 
-class PossessionReporter(PossessionReporter_IReadWrite):
+class PossessionReporter(GarbageCollectableObject, PossessionReporter_IReadWrite):
 	_hasPossession = False
 	@property
 	def HasPossession(self):
@@ -43,3 +43,9 @@ class PossessionReporter(PossessionReporter_IReadWrite):
 			return
 		self._hasPossession = False
 		self._possessionLostTrigger.Publish()
+
+	def _WipeDispatchers(self):
+		del self._possessionGainedTrigger
+		del self._possessionLostTrigger
+
+		super(PossessionReporter, self)._WipeDispatchers()

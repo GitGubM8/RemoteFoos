@@ -1,4 +1,6 @@
-class Event_IReadOnly:
+from Global.GarbageCollectableObject import *
+
+class Event_IReadOnly(IDisposedStatus):
 	def Subscribe(self, callback) -> None:
 		pass
 
@@ -18,15 +20,13 @@ class ParamedEvent_IWriteOnly:
 class ParamedEvent_IReadWrite(ParamedEvent_IReadOnly, ParamedEvent_IWriteOnly):
 	pass
 
-
-class Event(Event_IReadWrite):
+class Event(GarbageCollectableObject, Event_IReadWrite):
 	_listeners = set()
 	_isExecuting = False
 
 	def Subscribe(self, callback) -> None:
 		assert callable(callback)
 		self._listeners.add(callback)
-
 	def Unsubscribe(self, callback) -> None:
 		self._listeners.remove(callback)
 
@@ -41,13 +41,17 @@ class Event(Event_IReadWrite):
 				self._isExecuting = False
 				raise
 		self._isExecuting = False
-class ParamedEvent(ParamedEvent_IReadWrite):
+
+	def _WipeDispatchers(self):
+		self._listeners = None
+	def _DisposeChildren(self):
+		self._isExecuting = False
+class ParamedEvent(GarbageCollectableObject, ParamedEvent_IReadWrite):
 	_listeners = set()
 	_isExecuting = False
 
 	def Subscribe(self, callback) -> None:
 		self._listeners.add(callback)
-
 	def Unsubscribe(self, callback) -> None:
 		self._listeners.remove(callback)
 
@@ -62,4 +66,9 @@ class ParamedEvent(ParamedEvent_IReadWrite):
 				listener()
 			else:
 				self._isExecuting = False
+		self._isExecuting = False
+
+	def _WipeDispatchers(self):
+		self._listeners = None
+	def _DisposeChildren(self):
 		self._isExecuting = False

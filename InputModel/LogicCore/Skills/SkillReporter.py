@@ -1,6 +1,6 @@
 from Global.Events import *
 
-class SkillReporter_IReadOnly:
+class SkillReporter_IReadOnly(IDisposedStatus):
 	@property
 	def SkillUsedEvent(self) -> Event_IReadOnly:
 		pass

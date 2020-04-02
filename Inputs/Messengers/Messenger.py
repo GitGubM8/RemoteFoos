@@ -2,7 +2,7 @@ from Global.Events import *
 
 from InputCore.Message import Message
 
-class Messenger_IReadOnly:
+class Messenger_IReadOnly(IDisposedStatus):
 	@property
 	def NewMessageEvent(self) -> ParamedEvent_IReadOnly:
 		pass
@@ -12,7 +12,7 @@ class Messenger_IWriteOnly:
 class Messenger_IReadWrite(Messenger_IReadOnly, Messenger_IWriteOnly):
 	pass
 
-class Messenger(Messenger_IReadWrite):
+class Messenger(GarbageCollectableObject, Messenger_IReadWrite):
 	_newMessageTrigger = ParamedEvent()
 	@property
 	def NewMessageEvent(self) -> ParamedEvent_IReadOnly:
@@ -20,3 +20,8 @@ class Messenger(Messenger_IReadWrite):
 
 	def Announce(self, message: Message) -> None:
 		self._newMessageTrigger.Publish(message)
+	
+	def _WipeDispatchers(self):
+		del self._newMessageTrigger
+		
+		super(Messenger, self)._WipeDispatchers()

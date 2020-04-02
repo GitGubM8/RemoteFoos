@@ -7,7 +7,7 @@ class ImplicitSkillReporter_IWriteOnly(SkillReporter_IWriteOnly):
 class ImplicitSkillReporter_IReadWrite(SkillReporter_IReadWrite, ImplicitSkillReporter_IReadOnly, ImplicitSkillReporter_IWriteOnly):
 	pass
 
-class ImplicitSkillReporter(ImplicitSkillReporter_IReadWrite):
+class ImplicitSkillReporter(GarbageCollectableObject, ImplicitSkillReporter_IReadWrite):
 	_skillUsedTrigger = Event()
 	@property
 	def SkillUsedEvent(self) -> Event_IReadOnly:
@@ -15,3 +15,8 @@ class ImplicitSkillReporter(ImplicitSkillReporter_IReadWrite):
 
 	def Execute(self) -> None:
 		self._skillUsedTrigger.Publish()
+
+	def _WipeDispatchers(self):
+		del self._skillUsedTrigger
+
+		super(ImplicitSkillReporter, self)._WipeDispatchers()

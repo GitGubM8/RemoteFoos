@@ -3,7 +3,7 @@ from Global.Events import *
 
 from InputModel.Logic.Roles.Role import *
 
-class RoleReporter_IReadOnly:
+class RoleReporter_IReadOnly(IDisposedStatus):
 	@property
 	def CurrentRole(self) -> Role:
 		pass
@@ -16,7 +16,7 @@ class RoleReporter_IWriteOnly:
 class RoleReporter_IReadWrite(RoleReporter_IReadOnly, RoleReporter_IWriteOnly):
 	pass
 
-class RoleReporter(RoleReporter_IReadWrite):
+class RoleReporter(GarbageCollectableObject, RoleReporter_IReadWrite):
 	_currentRole = None
 	@property
 	def CurrentRole(self) -> Role:
@@ -36,3 +36,10 @@ class RoleReporter(RoleReporter_IReadWrite):
 
 	def __init__(self, role: Role):
 		self._currentRole = role
+
+	def _WipeDispatchers(self):
+		del self._roleChangedTrigger
+		super(RoleReporter, self)._WipeDispatchers()
+	def _DisposeChildren(self):
+		self._currentRole = None
+		super(RoleReporter, self)._DisposeChildren()
